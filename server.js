@@ -8,7 +8,8 @@ const app = express();
 require('dotenv').config();
 
 const redisClient = redis.createClient({
-    url: process.env.TALARON_REDIS
+    url: process.env.REDIS_URL,
+    password: process.env.REDIS_PASS
 });
 
 redisClient.connect();
