@@ -7,8 +7,6 @@ services:
     image: node:17-alpine3.14
     volumes: 
      - ../talaron/:/app
-    networks:
-      - default_network
     ports:
       - 3500:3500
     command: node /app/server.js
@@ -16,9 +14,10 @@ services:
       - TALARON_PORT=3500
       - JWT_PRIVATE_KEY_PATH=/app/jwtRS256.key
       - JWT_PUBLIC_KEY_PATH=/app/jwtRS256.pem
-      - REDIS_URL=redis://redis:6379
+      - REDIS_URL=redis://172.23.0.3:6379
       - REDIS_PASS=ANf3Mgx6nseCbZpu
 
 networks:
-  default_network:
-      driver: bridge
+  default:
+    external:
+      name: databases_default_network
