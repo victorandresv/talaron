@@ -1,0 +1,33 @@
+version: "3.2"
+
+services:
+
+  redis:
+    container_name: talaron-redis
+    image: redis:7.0-rc2-alpine
+    volumes: 
+      - ./db/talaron-redis-data:/data
+    networks:
+      - talaron_network
+    ports:
+      - 6379:6379
+
+  talaron:
+    container_name: talaron-node
+    image: node:17-alpine3.14
+    volumes: 
+     - ../talaron/:/app
+    networks:
+      - talaron_network
+    ports:
+      - 3500:3500
+    command: node /app/server.js
+    environment:
+      - TALARON_REDIS=redis://talaron-redis:6379
+      - TALARON_PORT=3500
+      - JWT_PRIVATE_KEY_PATH=/app/jwtRS256.key
+      - JWT_PUBLIC_KEY_PATH=/app/jwtRS256.pem
+
+networks:
+  talaron_network:
+      driver: bridge

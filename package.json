@@ -1,0 +1,15 @@
+{
+  "name": "talaron",
+  "version": "1.0.0",
+  "description": "API Token System",
+  "main": "server.js",
+  "author": "Victor Vargas",
+  "license": "MIT",
+  "dependencies": {
+    "crypto": "1.0.1",
+    "dotenv": "16.0.0",
+    "express": "4.17.3",
+    "jsonwebtoken": "8.5.1",
+    "redis": "4.0.4"
+  }
+}

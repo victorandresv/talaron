@@ -1,0 +1,6 @@
+node_modules
+.env
+*.key
+*.key.pub
+*.pem
+db
