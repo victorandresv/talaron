@@ -9,7 +9,7 @@ services:
      - ../talaron/:/app
     ports:
       - 3500:3500
-    command: ./app/install.sh
+    command: ./install.sh
     networks:
       - jwt_network
     restart: always
