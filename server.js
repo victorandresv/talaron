@@ -19,23 +19,35 @@ redisClient.connect();
  * CREATE TOKEN
  */
 const generateToken = async (req, res) => {
+    var privateKey = fs.readFileSync(process.env.JWT_PRIVATE_KEY_PATH);
+
     const json = {
         id: req.params.id,
         rand: Math.random(),
         ts: new Date().getTime().toString()
     }
     const refresh_token = crypto.createHash('sha256').update(JSON.stringify(json)).digest('base64');
-    await redisClient.set(req.params.id, refresh_token);
+    try{
+        await redisClient.set(refresh_token, JSON.stringify(json));
     
-    var privateKey = fs.readFileSync(process.env.JWT_PRIVATE_KEY_PATH);
-    var token = jwt.sign({
-        id: req.params.id,
-        refresh_token: refresh_token
-    }, privateKey, { 
-        algorithm: 'RS256',
-        expiresIn: '1m'
-    });
-    res.send(token);
+        var token = jwt.sign({
+            id: req.params.id
+        }, privateKey, { 
+            algorithm: 'RS256',
+            expiresIn: '1m'
+        });
+        res.send({
+            success: true,
+            access_token: token,
+            refresh_token: refresh_token
+        });
+    } catch(e){
+        res.send({
+            success: false,
+            error: e,
+        });
+    }
+    
 }
 app.get('/generate/:id', generateToken);
 
@@ -44,23 +56,19 @@ app.get('/generate/:id', generateToken);
  * REFRESH TOKEN
  */
 app.get('/refresh/:token', async (req, res) => {
-    try {
-        var decoded = jwt.decode(req.params.token);
-        refresh_token = await redisClient.get(decoded.id)
-        if(refresh_token == decoded.refresh_token){
-            req.params.id = decoded.id;
-            generateToken(req, res);
-        } else {
-            res.send({
-                success: false,
-                error: "Invalid refresh token"
-            });
-        }
-    } catch(e){
+    data = await redisClient.get(req.params.token)
+    if(data == null){
         res.send({
             success: false,
-            error: e
+            error: "Refresh token expired or invalid"
         });
+    } else {
+            await redisClient.del(req.params.token)
+            generateToken({
+                params: {
+                    id: data.id
+                }
+            }, res)
     }
 });
 
