@@ -2,22 +2,32 @@ version: "3.2"
 
 services:
 
-  talaron:
-    container_name: talaron-node
-    image: node:17-alpine3.14
-    volumes: 
-     - ../talaron/:/app
+  # talaron:
+  #   container_name: talaron-node-jwt
+  #   image: node:17-alpine3.14
+  #   volumes: 
+  #    - ../talaron/:/app
+  #   ports:
+  #     - 3500:3500
+  #   command: node /app/server.js
+  #   environment:
+  #     - TALARON_PORT=3500
+  #     - JWT_PRIVATE_KEY_PATH=/app/jwtRS256.key
+  #     - JWT_PUBLIC_KEY_PATH=/app/jwtRS256.pem
+  #     - REDIS_URL=redis://172.23.0.3:6379
+  #     - REDIS_PASS=ANf3Mgx6nseCbZpu
+
+  redis-jwt:
+    container_name: redis-jwt
+    image: redis:7.0-rc2-alpine
+    volumes:
+      - ../db/redis-jwt:/data
+    networks:
+      - jwt_network
+    command: redis-server --requirepass 6nseCbZpuF4LKfRus
     ports:
-      - 3500:3500
-    command: node /app/server.js
-    environment:
-      - TALARON_PORT=3500
-      - JWT_PRIVATE_KEY_PATH=/app/jwtRS256.key
-      - JWT_PUBLIC_KEY_PATH=/app/jwtRS256.pem
-      - REDIS_URL=redis://172.23.0.3:6379
-      - REDIS_PASS=ANf3Mgx6nseCbZpu
+      - 6215:6379
 
 networks:
-  default:
-    external:
-      name: databases_default_network
+  jwt_network:
+    driver: bridge
