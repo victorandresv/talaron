@@ -9,9 +9,10 @@ services:
      - ../talaron/:/app
     ports:
       - 3500:3500
-    command: node /app/server.js
+    command: npm install --global yarn && yarn install && node /app/server.js
     networks:
       - jwt_network
+    restart: always
     environment:
       - TALARON_PORT=3500
       - JWT_PRIVATE_KEY_PATH=/app/jwtRS256.key
@@ -27,6 +28,7 @@ services:
     networks:
       - jwt_network
     command: redis-server --requirepass 6nseCbZpuF4LKfRus
+    restart: always
     ports:
       - 6379:6379
 
