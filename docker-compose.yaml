@@ -16,7 +16,7 @@ services:
     environment:
       - TALARON_PORT=3500
       - JWT_PRIVATE_KEY_PATH=/app/jwtRS256.key
-      - JWT_PUBLIC_KEY_PATH=/app/jwtRS256.pem
+      - JWT_PUBLIC_KEY_PATH=/app/jwtRS256.key.pub
       - REDIS_URL=redis://redis-jwt:6379
       - REDIS_PASS=6nseCbZpuF4LKfRus
 
